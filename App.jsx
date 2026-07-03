@@ -1,32 +1,42 @@
 import { useState } from "react";
 import Die from "./Components/Die";
+import { nanoid } from "nanoid";
 
 export default function App() {
-  /**
-   * Challenge: Create a `Roll Dice` button that will re-roll
-   * all 10 dice
-   *
-   * Clicking the button should generate a new array of numbers
-   * and set the `dice` state to that new array (thus re-rendering
-   * the array to the page)
-   */
-
   const [dice, setDice] = useState(generateAllNewDice());
 
   function generateAllNewDice() {
-    return new Array(10).fill(0).map(() => Math.ceil(Math.random() * 6));
+    return new Array(10).fill(0).map(() => ({
+      value: Math.ceil(Math.random() * 6),
+      isHeld: false,
+      id: nanoid(),
+    }));
   }
 
   function rollDice() {
-    setDice(generateAllNewDice());
+    setDice((oldDice) =>
+      oldDice.map((die) => (die.isHeld ? die : { ...die, value: Math.ceil(Math.random() * 6) }))
+    );
   }
 
-  const diceElements = dice.map((num) => <Die value={num} />);
+  function hold(id) {
+    setDice((oldDice) =>
+      oldDice.map((die) => (die.id === id ? { ...die, isHeld: !die.isHeld } : die))
+    );
+  }
+
+  const diceElements = dice.map((dieObj) => (
+    <Die key={dieObj.id} value={dieObj.value} isHeld={dieObj.isHeld} hold={() => hold(dieObj.id)} />
+  ));
 
   return (
     <main>
+      <h1 className="title">Tenzies</h1>
+      <p className="instructions">
+        Roll until all dice are the same. Click each die to freeze it at its current value between
+        rolls.
+      </p>
       <div className="dice-container">{diceElements}</div>
-
       <button className="roll-dice" onClick={rollDice}>
         Roll
       </button>

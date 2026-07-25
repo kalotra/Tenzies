@@ -1,7 +1,6 @@
 import { useState } from "react";
 import Die from "./Components/Die";
 import { nanoid } from "nanoid";
-import Confetti from "react-confetti";
 
 export default function App() {
   const [dice, setDice] = useState(() => generateAllNewDice());
@@ -50,7 +49,7 @@ export default function App() {
 
   return (
     <main>
-      {gameWon && <Confetti />}
+      {gameWon}
       <div aria-live="polite" className="sr-only">
         {gameWon && <p>Congratulations! You won! Press "New Game" to start again.</p>}
       </div>
